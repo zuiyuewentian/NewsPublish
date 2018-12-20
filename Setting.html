@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<div class="mui-card">
+				<div class="mui-card-header mui-card-media" style="height:40vw;background-image:url(images/logo1024.png)"></div>
+				<div class="mui-card-content">
+					<div class="mui-card-content-inner">
+
+						<p style="color: #333;">睁眼看世界，一款给国人看国外人日常生活教育娱乐的软件。</p>
+						<p style="color: #333;">本软件分中文区和英文区，以分别 适应不同用户，也给想要提高自己的英语阅读水平的朋友提供一手的国外日常。
+						</p>
+						<p style="color: #333;">所有资料来源于国外资料翻译，如有侵权，请联系up主!</p>
+						<p style="color: #333;">QQ交流群：641311261</p>
+					</div>
+				</div>
+				<hr/>
+				<div>
+					<ul class="mui-table-view mui-table-view-chevron">
+						<li class="mui-table-view-cell">
+							<a class="mui-navigate-right" onclick="jumpCopyright()">打赏UP主
+							</a>
+						</li>
+						<li id="mList" class="mui-table-view-cell">
+							<a href="#account" class="mui-navigate-right" onclick="jumpSystem()">系统版本
+								<i id="version_text" class="mui-pull-right update"></i>
+								<span id="new_message" class="mui-badge mui-badge-danger" style="display: none;">1</span>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+		</div>
+	</body>
+	<script src="js/mui.min.js"></script>
+	<script src="js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/config.js"></script>
+	<script type="text/javascript">
+		mui.init();
+		var MessageData = null;
+
+		mui.plusReady(function() {
+			document.getElementById("version_text").innerText = "V" + GetVersionText();
+
+			GetNewVersion();
+		});
+
+		function jumpSystem() {
+			var webview = mui.openWindow({
+					url: 'version.html',
+					extras: {
+						data: MessageData,
+					}
+				}
+
+			);
+
+		}
+
+		//获取新版本
+		function GetNewVersion() {
+
+			mui.ajax(GetGlobalConfig(), {
+				dataType: 'json',
+				type: 'get', //HTTP请求类型,
+				timeout: 100000,
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				success: function(rsp) {
+					var result = JSON.parse(rsp);
+					if(result == null)
+						return;
+
+					MessageData = result;
+					var message = document.getElementById('new_message');
+					if(result.Update == 1) {
+						message.style.display = "block";
+					} else {
+						message.style.display = "none";
+					}
+				},
+				error: function(xhr, type, errorThrown) {
+					console.log(xhr);
+					console.log('error ' + type);
+					console.log('error ' + errorThrown);
+				}
+			});
+		}
+	</script>
+	</body>
+
+</html>

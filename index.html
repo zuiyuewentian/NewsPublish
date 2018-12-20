@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*">
+		<meta http-equiv="content-security-policy">
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title>首页</title>
+
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link href="css/iconfont.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		<header id="myhead">
+			<h1 id="mytitle" class="mui-title" style="z-index: 111111;">
+			睁眼看世界
+			</h1>
+		</header>
+
+		<nav class="mui-bar mui-bar-tab">
+			<a id="defaultTab" class="mui-tab-item mui-active" href="ChHome.html">
+				<span class="mui-icon iconfont icon-zhongwen"></span>
+				<span class="mui-tab-label">中文</span>
+			</a>
+			<a class="mui-tab-item" href="EnHome.html">
+				<span class="mui-icon iconfont icon-yingwen"></span>
+				<span class="mui-tab-label">英文</span>
+			</a>
+			<a class="mui-tab-item" href="Setting.html">
+				<span class="mui-icon mui-icon-gear"><span id="setMessage" class="mui-badge" style="display: none;">1</span></span>
+				<span class="mui-tab-label">设置</span>
+			</a>
+		</nav>
+		<script src="js/mui.min.js"></script>
+		<script src="js/config.js"></script>
+		<script>
+			//启用双击监听
+			mui.init({
+				gestureConfig: {
+					doubletap: true
+				},
+			});
+
+			var subpages = ['ChHome.html', 'EnHome.html', 'Setting.html'];
+			var subpage_style = {
+				top: '85px',
+				bottom: '51px'
+			};
+			var aniShow = {};
+
+			//创建子页面，首个选项卡页面显示，其它均隐藏；
+			mui.plusReady(function() {
+				setAutoHeight();
+				//plus.navigator.setFullscreen(false);
+				var self = plus.webview.currentWebview();
+				for(var i = 0; i < 3; i++) {
+					var temp = {};
+					var sub = plus.webview.create(subpages[i], subpages[i], subpage_style);
+					if(i > 0) {
+						sub.hide();
+					} else {
+						temp[subpages[i]] = "true";
+						mui.extend(aniShow, temp);
+					}
+					self.append(sub);
+				}
+				listenerMessage();
+				GetNewVersion();
+			});
+			//当前激活选项
+			var activeTab = subpages[0];
+			var title = document.getElementById("title");
+			//选项卡点击事件
+			mui('.mui-bar-tab').on('tap', 'a', function(e) {
+				var targetTab = this.getAttribute('href');
+				if(targetTab == activeTab) {
+					return;
+				}
+				//显示目标选项卡
+				//若为iOS平台或非首次显示，则直接显示
+				if(mui.os.ios || aniShow[targetTab]) {
+					plus.webview.show(targetTab);
+				} else {
+					//否则，使用fade-in动画，且保存变量
+					var temp = {};
+					temp[targetTab] = "true";
+					mui.extend(aniShow, temp);
+					plus.webview.show(targetTab, "fade-in", 300);
+
+				}
+				//隐藏当前;
+				plus.webview.hide(activeTab);
+				//更改当前活跃的选项卡
+				activeTab = targetTab;
+			});
+			//自定义事件，模拟点击“首页选项卡”
+			document.addEventListener('gohome', function() {
+				var defaultTab = document.getElementById("defaultTab");
+				//模拟首页点击
+				mui.trigger(defaultTab, 'tap');
+				//切换选项卡高亮
+				var current = document.querySelector(".mui-bar-tab>.mui-tab-item.mui-active");
+				if(defaultTab !== current) {
+					current.classList.remove('mui-active');
+					defaultTab.classList.add('mui-active');
+				}
+			});
+
+			//监听消息
+			function listenerMessage() {
+				plus.push.addEventListener("click", function(msg) {
+					mui.toast(msg.content);
+				}, false);
+			}
+
+			function setAutoHeight() {
+				var topoffset = '45px';
+				var header = document.getElementById('myhead');
+				var title = document.getElementById('mytitle');
+				if(plus.navigator.isImmersedStatusbar()) {
+					// 兼容immersed状态栏模式			
+					// 获取状态栏高度并根据业务需求处理，这里重新计算了子窗口的偏移位置			
+					topoffset = (Math.round(plus.navigator.getStatusbarHeight()) + 45);
+					header.style.height = topoffset + 'px';
+					header.style.paddingTop = (topoffset - 45) + 'px';
+					subpage_style.top = topoffset + 'px';
+				}
+			}
+
+			function GetNewVersion() {
+				mui.ajax(GetGlobalConfig(), {
+					dataType: 'json',
+					type: 'get', //HTTP请求类型,
+					timeout: 100000,
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					success: function(rsp) {
+						var result = JSON.parse(rsp);
+						if(result == null)
+							return;
+
+						MessageData = result;
+						var message = document.getElementById('setMessage');
+						if(result.Update == 1) {
+							message.style.display = "block";
+						} else {
+							message.style.display = "none";
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						console.log(xhr);
+						console.log('error ' + type);
+						console.log('error ' + errorThrown);
+					}
+				});
+			}
+		</script>
+	</body>
+
+</html>

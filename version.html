@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="/css/app.css" />
+		<style>
+			.mui-progressbar-danger span {
+				background-color: #dd524d;
+			}
+		</style>	
+	</head>
+
+	<body>
+		<header id="myhead" class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 id="headerTitle" class="mui-title">版本更新消息</h1>
+		</header>
+		
+		
+		<div id="mynewCard" class="mui-card" style="position: relative; height: auto;margin:50px auto;">
+				<div class="mui-card-header" style="text-align: center;">
+				<span id="headText">版本更新V1.2.1版</span></div>
+				<div class="mui-card-content">
+					<div id="contentCard" class="mui-card-content-inner">
+						[版本更新内容] <br/>
+						<br/>1.修改申请取消功能；
+      					<br/>2.车辆列表的数据量展示筛选；
+      					<br/>3.优化部分界面UI和图标
+					</div>
+					<p id="progressText" style="color: red;margin-left:20px ;">下载进度：0%
+					<p id="progressBar" class="mui-progressbar mui-progressbar-danger" data-progress="0"><span></span></p>
+				</div>
+				<div class="mui-card-footer" >
+					<div style="position: relative;margin: auto;">
+						<button type="button" class="mui-btn mui-btn-danger" onclick="StartDownload()">立即下载更新</button>
+					</div>
+				</div>
+			</div>
+			
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript" src="js/common.js"></script>
+		<script type="text/javascript" src="js/immersed.js"></script>
+		<script>
+			var messageData;
+			var progressbar1 = mui('#progressBar');
+			mui.init();
+			mui.plusReady(function() {
+				setAutoHeight();
+				
+				var self = plus.webview.currentWebview();
+				messageData = self.data;
+
+				var title = document.getElementById("headerTitle");
+				var head = document.getElementById("headText");
+				var content = document.getElementById("contentCard");
+				var card = document.getElementById("mynewCard");
+				if(messageData.Update == 0) {
+					title.innerText = "当前版本已经是最新版";
+					card.style.display = "none";
+				} else {
+					title.innerText = "有新版本需要更新";
+					card.style.display = "block";
+				}
+				head.innerText = messageData.Title;
+				content.innerHTML = messageData.Content;
+				//console.log(content);
+			});
+			var dtask = null;
+
+			//点击下载
+			function StartDownload() {
+				var ua = navigator.userAgent.toLowerCase();
+            	if(/iphone|ipad|ipod/.test(ua)) {   
+            		mui.toast("苹果系统请到apple store更新");
+            		return;
+            	}
+				
+				if(dtask) {
+					mui.toast("下载任务已创建！");
+					return;
+				}
+				var url = messageData.Link;
+				var options = {
+					method: "GET"
+				};
+				dtask = plus.downloader.createDownload(url, options);
+				dtask.addEventListener("statechanged", function(task, status) {
+						if(!dtask) {
+							return;
+						}
+						switch(task.state) {
+							case 1: // 开始
+								setValue("开始下载：0%", 0)
+								break;
+							case 2: // 已连接到服务器
+								setValue("开始下载：1%", 1)
+								break;
+							case 3: // 已接收到数据
+								var value = parseInt((parseFloat(task.downloadedSize) * 100) / parseFloat(task.totalSize));
+								setValue("下载数据更新：" + value + "%", value);
+								break;
+							case 4: // 下载完成
+								setValue("下载完成：100%", 100);
+								//安装程序，第一个参数是路径，默认的下载路径在_downloads里面
+								plus.runtime.install(dtask.filename, {}, function() {
+									plus.nativeUI.toast('安装成功');
+								}, function() {
+									plus.nativeUI.toast('安装失败');
+								});
+						}
+						
+				});
+				dtask.start();
+			}
+
+			//设置下载进度
+			function setValue(valueText, proValue) {
+				document.getElementById('progressText').innerText = valueText;
+				mui(progressbar1).progressbar().setProgress(proValue);
+			}
+			
+			function setAutoHeight(){
+				var topoffset='45px';			
+				var header=document.getElementById('myhead');		
+				var title=document.getElementById('mynewCard');		
+				if(plus.navigator.isImmersedStatusbar()){
+					// 兼容immersed状态栏模式			
+					// 获取状态栏高度并根据业务需求处理，这里重新计算了子窗口的偏移位置			
+					topoffset=(Math.round(plus.navigator.getStatusbarHeight())+45);	
+					header.style.height=topoffset+'px';
+					header.style.paddingTop=(topoffset-45)+'px';
+					title.style.marginTop = topoffset+ 10 +'px';
+				}
+			}
+		</script>
+	</body>
+
+</html>

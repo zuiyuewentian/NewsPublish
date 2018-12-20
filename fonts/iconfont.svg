@@ -1,0 +1,32 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<!--
+2013-9-30: Created.
+-->
+<svg>
+<metadata>
+Created by iconfont
+</metadata>
+<defs>
+
+<font id="iconfont" horiz-adv-x="1024" >
+  <font-face
+    font-family="iconfont"
+    font-weight="500"
+    font-stretch="normal"
+    units-per-em="1024"
+    ascent="896"
+    descent="-128"
+  />
+    <missing-glyph />
+    
+    <glyph glyph-name="zhongwen" unicode="&#58880;" d="M56.889 839.111v-853.333h853.333V839.11H56.89z m796.444-796.444H113.778V782.222h739.555v-739.555zM284.444 384h170.667v-284.444H512V384h170.667v-56.889h56.889V611.556H512V725.333h-56.889v-113.777H227.556V327.11h56.888V384z m398.223 170.667v-113.778H512V554.667h170.667z m-398.223 0h170.667v-113.778H284.444V554.667z"  horiz-adv-x="1024" />
+
+    
+    <glyph glyph-name="yingwen" unicode="&#58881;" d="M56.889 839.111v-853.333h853.333V839.11H56.89z m796.444-796.444H113.778V782.222h739.555v-739.555zM455.111 213.333H227.556V384h170.666v56.889H227.556V611.556H455.11v56.888H170.667v-512H455.11zM568.89 440.89h170.667v-284.445h56.888V497.778H512v-341.334h56.889z"  horiz-adv-x="1024" />
+
+    
+
+
+  </font>
+</defs></svg>

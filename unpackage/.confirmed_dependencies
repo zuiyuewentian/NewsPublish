@@ -1,0 +1,34 @@
+{
+  "index.html": {
+    "resources": [
+      "ChHome.html",
+      "Setting.html",
+      "EnHome.html"
+    ],
+    "refer": [
+      "ChHome.html",
+      "EnHome.html",
+      "Setting.html"
+    ]
+  },
+  "ChHome.html": {
+    "refer": [
+      "detail.html"
+    ]
+  },
+  "EnHome.html": {
+    "refer": [
+      "detail.html"
+    ]
+  },
+  "Setting.html": {
+    "refer": [
+      "version.html"
+    ]
+  },
+  "detail.html": {
+    "refer": [
+      "share.html"
+    ]
+  }
+}
