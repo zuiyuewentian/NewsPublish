@@ -17,5 +17,4 @@
 后面会分开讲解其中一些技术点：
 1.完美设置mui沉浸式效果： http://ask.dcloud.net.cn/article/35390
 
-给一个下载测试体验：
-![Image text](https://raw.github.com/yourName/repositpry/master/yourprojectName/img-folder/test.jpg)
+下载体验：http://ask.dcloud.net.cn/article/35389
